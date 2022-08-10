@@ -20,35 +20,37 @@ const MarkingCom = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [check, setChecked] = useState(false);
 
+  const PostCheckIn = async () => {
+    let response =  axios
+      .post(
+        'https://presence-app-server.herokuapp.com/attendance/create_attendance',
+        {
+          checkin: moment().format('MMMM Do YYYY, h:mm a'),
+          checkout: 'not yet',
+          userid: '1f3f7a37-feaa-4017-951f-55485f4f5527',
+        },
+      )
+      .then(x => {
+        AsyncStorage.setItem('id', x.data.attendance_sheet.id);
+      });
+    setChecked(true);
+  };
 
+  const PostCheckOut = async () => {
+    setChecked(false);
+    let response = axios
+      .post(
+        'https://presence-app-server.herokuapp.com/attendance/checkout_attendance',
+        {
+          checkout: moment().format('MMMM Do YYYY, h:mm a'),
+          id: await AsyncStorage.getItem('id')
+        },
+      )
+      .then(x => {
+        console.log(x);
+      });
 
- const PostCheckIn = async()=>{
-   let response =await axios.post('https://presence-server.herokuapp.com/attendance/create_attendance',{
-    checkin:moment().format('MMMM Do YYYY, h:mm a'),
-    checkout:'not yet',
-    userid:'9c18da62-4bae-4357-97d6-6d3a74f994c0',
-  
-   }).then((x)=>{
-    console.log(x.data.attendance_sheet.id)
-    AsyncStorage.setItem('id', x.data.attendance_sheet.id)
-   })
-   setChecked(true)
-  }
-
-
-  const PostCheckOut = async()=>{
-    const id = await AsyncStorage.getItem('id')
-    let response =await axios.post('https://presence-server.herokuapp.com/attendance/checkout_attendance',{
-     checkout:moment().format('MMMM Do YYYY, h:mm a'),
-     id:id,
-   
-    }).then((x)=>{
-     console.log(x.data.attendance_sheet.id)
-     AsyncStorage.setItem('id', x.data.attendance_sheet.id)
-    })
-    setChecked(false)
-   }
- 
+  };
 
   if (check === false) {
     return (
@@ -83,14 +85,13 @@ const MarkingCom = () => {
               </View>
             </View>
             <View style={styles.grid_view}>
-            <Text style={styles.report_text_heading}>View Week Report</Text>
+              <Text style={styles.report_text_heading}>View Week Report</Text>
               <View style={styles}>
-              <TouchableOpacity
-                onPress={() => setModalVisible(true)}
-                style={styles.detail_btn_report}>
-                <Text style={styles.report_text}>View</Text>
-              </TouchableOpacity>
-                
+                <TouchableOpacity
+                  onPress={() => setModalVisible(true)}
+                  style={styles.detail_btn_report}>
+                  <Text style={styles.report_text}>View</Text>
+                </TouchableOpacity>
               </View>
             </View>
           </View>
@@ -103,12 +104,7 @@ const MarkingCom = () => {
               </View>
             </View>
             <View style={styles.grid_view}>
-              <View style={styles.text_grid2}>
-                <Text style={styles.detail_text_1}>Thursday</Text>
-              </View>
-              <View style={styles.text_grid2}>
-                <Text style={styles.detail_text_1}>30 July 2022</Text>
-              </View>
+             
             </View>
             <View style={styles.grid_view}>
               <View style={styles.text_1_grid2}>
@@ -129,7 +125,7 @@ const MarkingCom = () => {
               />
             </TouchableOpacity>
             <View style={styles.instruction_view}>
-            <Text style={{color:"white", fontSize:15}}>Instruction</Text>
+              <Text style={{color: 'white', fontSize: 15}}>Instruction</Text>
               <Text style={styles.instruction_text}>
                 1.Touch check-in button when you arrive at the site.
               </Text>
@@ -176,7 +172,7 @@ const MarkingCom = () => {
               width: '100%',
             }}></View>
         )}
-          <View style={styles.container}>
+        <View style={styles.container}>
           <View style={styles.full_view}>
             <View style={styles.grid_view}>
               <View style={styles.user_detail}>
@@ -195,32 +191,26 @@ const MarkingCom = () => {
               </View>
             </View>
             <View style={styles.grid_view}>
-            <Text style={styles.report_text_heading}>View Week Report</Text>
+              <Text style={styles.report_text_heading}>View Week Report</Text>
               <View style={styles}>
-              <TouchableOpacity
-                onPress={() => setModalVisible(true)}
-                style={styles.detail_btn_report}>
-                <Text style={styles.report_text}>View</Text>
-              </TouchableOpacity>
-                
+                <TouchableOpacity
+                  onPress={() => setModalVisible(true)}
+                  style={styles.detail_btn_report}>
+                  <Text style={styles.report_text}>View</Text>
+                </TouchableOpacity>
               </View>
             </View>
           </View>
         </View>
         <View style={styles.container}>
           <View style={styles.full_view2}>
-          <View style={styles.grid_view_2}>
+            <View style={styles.grid_view_2}>
               <View style={styles.text_grid2}>
                 <Text style={styles.detail_text_1}>Hi, Worker</Text>
               </View>
             </View>
             <View style={styles.grid_view}>
-              <View style={styles.text_grid2}>
-                <Text style={styles.detail_text_1}>Thursday</Text>
-              </View>
-              <View style={styles.text_grid2}>
-                <Text style={styles.detail_text_1}>30 July 2022</Text>
-              </View>
+            
             </View>
             <View style={styles.grid_view}>
               <View style={styles.user_detail}>
@@ -228,7 +218,6 @@ const MarkingCom = () => {
                   Touch check-out button when you leave.
                 </Text>
               </View>
-              
             </View>
             <TouchableOpacity style={styles.detail_btnChecked}>
               <Text style={styles.info_text}>Mark Attendance checked-in</Text>
@@ -237,9 +226,7 @@ const MarkingCom = () => {
                 name="checkmark-circle-sharp"
               />
             </TouchableOpacity>
-            <TouchableOpacity
-              onPress={PostCheckOut}
-              style={styles.detail_btn}>
+            <TouchableOpacity onPress={PostCheckOut} style={styles.detail_btn}>
               <Text style={styles.info_text}>Mark Attendance check-out</Text>
               <CheckBtn2
                 style={styles.checkbtn_red}
@@ -258,11 +245,7 @@ const MarkingCom = () => {
           <Modal
             animationType="slide"
             transparent={true}
-            visible={modalVisible}
-            onRequestClose={() => {
-              Alert.alert('Modal has been closed.');
-              setModalVisible(!modalVisible);
-            }}>
+            visible={modalVisible}>
             <View style={styles.centeredView}>
               <View style={styles.modalView}>
                 <Text style={styles.modalText}>Info</Text>
@@ -305,7 +288,7 @@ const styles = StyleSheet.create({
   user_detail: {
     marginLeft: 32,
   },
-  user_detail2:{
+  user_detail2: {
     marginLeft: 15,
     marginRight: 28,
   },
@@ -313,10 +296,10 @@ const styles = StyleSheet.create({
     color: 'white',
     fontWeight: '600',
     fontSize: 18,
-    alignContent:"center",
-    justifyContent:"center",
-    alignItems:"center",
-    alignSelf:"center"
+    alignContent: 'center',
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignSelf: 'center',
   },
   detail_text_2: {
     color: 'white',
@@ -327,7 +310,6 @@ const styles = StyleSheet.create({
     color: 'white',
     fontWeight: '300',
     fontSize: 20,
-  
   },
   detail_text_3: {
     color: 'white',
@@ -335,14 +317,12 @@ const styles = StyleSheet.create({
     fontSize: 14,
     marginTop: 20,
   },
-  text_grid2:{
-marginLeft:28
+  text_grid2: {
+    marginLeft: 28,
   },
-  text_1_grid2:{
-marginLeft:28
+  text_1_grid2: {
+    marginLeft: 28,
   },
-  
-
 
   detail_btn: {
     flexDirection: 'row',
@@ -429,7 +409,6 @@ marginLeft:28
     marginLeft: 10,
     alignItems: 'center',
     alignSelf: 'center',
-   
   },
   image_icon: {
     color: '#296ecf',
@@ -444,9 +423,9 @@ marginLeft:28
     marginLeft: 10,
     alignItems: 'center',
     alignSelf: 'center',
-    opacity:0.6
+    opacity: 0.6,
   },
-  detail_btnChecked:{
+  detail_btnChecked: {
     flexDirection: 'row',
     borderWidth: 1,
     borderColor: 'white',
@@ -457,17 +436,17 @@ marginLeft:28
     backgroundColor: '#296ecf',
     marginTop: 20,
     backgroundColor: 'white',
-    opacity:0.6
+    opacity: 0.6,
   },
   instruction_text: {
     color: 'white',
     marginTop: 5,
-    textAlign:"left",
-    fontSize:13
+    textAlign: 'left',
+    fontSize: 13,
   },
-  instruction_view:{
-    paddingLeft:20,
-    paddingTop:35
+  instruction_view: {
+    paddingLeft: 20,
+    paddingTop: 35,
   },
 
   // modal css
@@ -500,7 +479,7 @@ marginLeft:28
     elevation: 2,
   },
   buttonClose: {
-    marginTop:10,
+    marginTop: 10,
     backgroundColor: '#296ecf',
   },
   textStyle: {

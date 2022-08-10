@@ -10,9 +10,6 @@ import {
 import AttendIcon from 'react-native-vector-icons/AntDesign';
 import UserIcon from 'react-native-vector-icons/AntDesign';
 import SettingsIcon from 'react-native-vector-icons/SimpleLineIcons';
-import RefreshIcon from 'react-native-vector-icons/SimpleLineIcons';
-import PdfIcon from 'react-native-vector-icons/AntDesign';
-import InfoIcon from 'react-native-vector-icons/AntDesign';
 import React, {useState} from 'react';
 
 const Worker = ({navigation}) => {

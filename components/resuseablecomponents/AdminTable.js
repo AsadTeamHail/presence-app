@@ -1,4 +1,5 @@
-import React, {useState} from 'react';
+import axios from 'axios';
+import React, {useState, useEffect} from 'react';
 import {
   Alert,
   Modal,
@@ -12,28 +13,40 @@ import {
 } from 'react-native';
 import {DataTable} from 'react-native-paper';
 
+
 const AdminTable = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [modalVisible_2, setModalVisible_2] = useState(false);
+  const [attendance, setAttendance] = useState([]);
 
+  useEffect(() => {
+
+    let response =axios.get('https://presence-app-server.herokuapp.com/attendance/get_attendance',{ headers: {
+      'id': '1f3f7a37-feaa-4017-951f-55485f4f5527'
+    }}).then((x)=>{
+      setAttendance(x.data)
+    })
+   }, [attendance])
+  
   return (
     <View style={{width: 300}}>
       <ScrollView>
         <DataTable>
           <DataTable.Header>
-            <DataTable.Title>Day</DataTable.Title>
+            <DataTable.Title>Date</DataTable.Title>
             <DataTable.Title numeric>Check-in</DataTable.Title>
             <DataTable.Title numeric>Check-out</DataTable.Title>
             <DataTable.Title numeric>Image</DataTable.Title>
           </DataTable.Header>
 
-          <DataTable.Row>
-            <DataTable.Cell>Monday</DataTable.Cell>
+        {attendance.map((item,index)=>{return(
+          <DataTable.Row  key={index}>
+            <DataTable.Cell>{item.check_in.slice(0,9)}</DataTable.Cell>
             <DataTable.Cell numeric>
-              <Text style={styles.check_in_time}>11:00am</Text>
+              <Text style={styles.check_in_time}>{item.check_in.slice(18,25)}</Text>
             </DataTable.Cell>
             <DataTable.Cell numeric>
-              <Text style={styles.check_out_time}>12:00am</Text>
+            <Text style={styles.check_in_time}>{item.check_out.slice(18,25)}</Text>
             </DataTable.Cell>
             <DataTable.Cell numeric>
               <TouchableOpacity
@@ -43,73 +56,10 @@ const AdminTable = () => {
               </TouchableOpacity>
             </DataTable.Cell>
           </DataTable.Row>
+)})}
 
-          <DataTable.Row>
-            <DataTable.Cell>Tuesday</DataTable.Cell>
-            <DataTable.Cell numeric>
-              <Text style={styles.check_in_time2}>11:00am</Text>
-            </DataTable.Cell>
-            <DataTable.Cell numeric>
-              <Text style={styles.check_out_time2}>12:00am</Text>
-            </DataTable.Cell>
-            <DataTable.Cell numeric>
-              <TouchableOpacity
-                onPress={() => setModalVisible(true)}
-                style={styles.img_btn}>
-                <Text style={styles.text_btn}>View</Text>
-              </TouchableOpacity>
-            </DataTable.Cell>
-          </DataTable.Row>
-          <DataTable.Row>
-            <DataTable.Cell>Wednesday</DataTable.Cell>
-            <DataTable.Cell numeric>
-              <Text style={styles.check_in_time3}>11:00am</Text>
-            </DataTable.Cell>
-            <DataTable.Cell numeric>
-              <Text style={styles.check_out_time3}>12:00am</Text>
-            </DataTable.Cell>
-            <DataTable.Cell numeric>
-              <TouchableOpacity
-                onPress={() => setModalVisible_2(true)}
-                style={styles.img_btn}>
-                <Text style={styles.text_btn}>View</Text>
-              </TouchableOpacity>
-            </DataTable.Cell>
-          </DataTable.Row>
-          <DataTable.Row>
-            <DataTable.Cell>Thursday</DataTable.Cell>
-            <DataTable.Cell numeric>
-              <Text style={styles.check_in_time4}>11:00am</Text>
-            </DataTable.Cell>
-            <DataTable.Cell numeric>
-              <Text style={styles.check_out_time4}>12:00am</Text>
-            </DataTable.Cell>
-            <DataTable.Cell numeric>
-              <TouchableOpacity
-                onPress={() => setModalVisible_2(true)}
-                style={styles.img_btn}>
-                <Text style={styles.text_btn}>View</Text>
-              </TouchableOpacity>
-            </DataTable.Cell>
-          </DataTable.Row>
-          <DataTable.Row>
-            <DataTable.Cell>Friday</DataTable.Cell>
-            <DataTable.Cell numeric>
-              <Text style={styles.check_in_time5}>11:00am</Text>
-            </DataTable.Cell>
-            <DataTable.Cell numeric>
-              <Text style={styles.check_out_time5}>12:00am</Text>
-            </DataTable.Cell>
-            <DataTable.Cell numeric>
-              <TouchableOpacity
-                onPress={() => setModalVisible(true)}
-                style={styles.img_btn}>
-                <Text style={styles.text_btn}>View</Text>
-              </TouchableOpacity>
-            </DataTable.Cell>
-          </DataTable.Row>
+        
         </DataTable>
-
         <View style={styles.centeredView}>
           <Modal
             animationType="slide"
