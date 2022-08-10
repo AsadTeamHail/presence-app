@@ -6,8 +6,6 @@ import {
   TouchableOpacity,
   Modal,
   Pressable,
-  ScrollView,
-  SafeAreaView,
 } from 'react-native';
 import React, {useState} from 'react';
 import CheckBtn from 'react-native-vector-icons/Ionicons';
@@ -15,6 +13,7 @@ import CheckBtn2 from 'react-native-vector-icons/Ionicons';
 import ImageIcon from 'react-native-vector-icons/FontAwesome';
 import AdminTable from '../../components/resuseablecomponents/AdminTable';
 import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import moment from 'moment';
 
 const MarkingCom = () => {
@@ -27,8 +26,9 @@ const MarkingCom = () => {
 
  const PostCheckIn =()=>{
    let response = axios.post('https://presence-server.herokuapp.com/attendance/create_attendance',{
-    check_in:'red',
-    check_out:'reed',
+    checkin:moment().format('MMMM Do YYYY, h:mm a'),
+    checkout:'not yet',
+    userid:'9c18da62-4bae-4357-97d6-6d3a74f994c0',
   
    }).then((x)=>{
     console.log(x.data)
