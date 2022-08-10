@@ -17,7 +17,6 @@ import React, {useState} from 'react';
 import AdminTable from './resuseablecomponents/AdminTable';
 
 const Admin = ({navigation}) => {
-  const [login, setLogin] = useState(true);
 
   return (
     <View style={styles.container}>
@@ -29,14 +28,14 @@ const Admin = ({navigation}) => {
       <View style={styles.grid_view}>
         <View style={styles.home_view}>
           <TouchableOpacity
-            style={styles.options_touchButton}
+            style={styles.options_touchButtonActive}
             onPress={() => navigation.navigate('Attendance')}>
             <AttendIcon name="calendar" style={styles.options_icon} />
             <Text style={{color: 'white'}}>Attendance</Text>
           </TouchableOpacity>
         </View>
         <View style={styles.home_view}>
-          <TouchableOpacity style={styles.options_touchButton}>
+          <TouchableOpacity  style={styles.options_touchButton}>
             <UserIcon name="user" style={styles.options_icon} />
             <Text style={{color: 'white'}}>Profile</Text>
           </TouchableOpacity>
@@ -51,22 +50,8 @@ const Admin = ({navigation}) => {
         </View>
         <View style={styles.home_view}>
           <TouchableOpacity style={styles.options_touchButton}>
-            <RefreshIcon name="refresh" style={styles.options_icon} />
-            <Text style={{color: 'white'}}>Refresh</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-      <View style={styles.grid_view}>
-        <View style={styles.home_view}>
-          <TouchableOpacity style={styles.options_touchButton}>
             <PdfIcon name="pdffile1" style={styles.options_icon} />
             <Text style={{color: 'white'}} >Download</Text>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.home_view}>
-          <TouchableOpacity style={styles.options_touchButton}>
-            <InfoIcon name="infocirlceo" style={styles.options_icon} />
-            <Text style={{color: 'white'}}>Info</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -104,6 +89,7 @@ const styles = StyleSheet.create({
     height: 130,
     backgroundColor:"#296ecf",
     borderColor:"white",
+    opacity:0.6,
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
@@ -114,6 +100,27 @@ const styles = StyleSheet.create({
     
     elevation: 3,
     
+    
+  },
+  options_touchButtonActive:{
+    borderRadius: 15,
+    margin: 8,
+    padding: 28,
+    justifyContent: 'space-evenly',
+    alignItems: 'center',
+    width: 131,
+    height: 130,
+    backgroundColor:"#296ecf",
+    borderColor:"white",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.22,
+    shadowRadius: 2.22,
+    
+    elevation: 3,
     
   },
   options_icon: {

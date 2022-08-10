@@ -16,22 +16,23 @@ import InfoIcon from 'react-native-vector-icons/AntDesign';
 import React, {useState} from 'react';
 
 const Worker = ({navigation}) => {
-  const [login, setLogin] = useState(true);
+
+  
 
   return (
     <View style={styles.container}>
       <View style={styles.heading_div}>
         <Text style={styles.heading_text}>
-          Welcome, <Text style={{color: 'black'}}>Worker!</Text>
+          Welcome, <Text style={{color: 'black'}}>Employee!</Text>
         </Text>
       </View>
       <View style={styles.grid_view}>
         <View style={styles.home_view}>
           <TouchableOpacity
-            style={styles.options_touchButton}
+            style={styles.options_touchButtonActive}
             onPress={() => navigation.navigate('Marking')}>
             <AttendIcon name="calendar" style={styles.options_icon} />
-            <Text style={{color: 'white'}}>Marking</Text>
+            <Text style={{color: 'white'}}>Attendance</Text>
           </TouchableOpacity>
         </View>
         <View style={styles.home_view}>
@@ -43,31 +44,15 @@ const Worker = ({navigation}) => {
       </View>
       <View style={styles.grid_view}>
         <View style={styles.home_view}>
-          <TouchableOpacity style={styles.options_touchButton}>
+          <TouchableOpacity style={styles.options_touchButtonSetting}>
             <SettingsIcon name="settings" style={styles.options_icon} />
             <Text style={{color: 'white'}}>Settings</Text>
           </TouchableOpacity>
         </View>
-        <View style={styles.home_view}>
-          <TouchableOpacity style={styles.options_touchButton}>
-            <RefreshIcon name="refresh" style={styles.options_icon} />
-            <Text style={{color: 'white'}}>Refresh</Text>
-          </TouchableOpacity>
-        </View>
+       
       </View>
       <View style={styles.grid_view}>
-        <View style={styles.home_view}>
-          <TouchableOpacity style={styles.options_touchButton}>
-            <PdfIcon name="pdffile1" style={styles.options_icon} />
-            <Text style={{color: 'white'}} >Download</Text>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.home_view}>
-          <TouchableOpacity style={styles.options_touchButton}>
-            <InfoIcon name="infocirlceo" style={styles.options_icon} />
-            <Text style={{color: 'white'}}>Info</Text>
-          </TouchableOpacity>
-        </View>
+        
       </View>
     </View>
   );
@@ -92,8 +77,7 @@ const styles = StyleSheet.create({
   grid_view: {
     flexDirection: 'row',
   },
-
-  options_touchButton: {
+  options_touchButtonActive:{
     borderRadius: 15,
     margin: 8,
     padding: 28,
@@ -114,6 +98,49 @@ const styles = StyleSheet.create({
     elevation: 3,
     
     
+  },
+
+  options_touchButton: {
+    borderRadius: 15,
+    margin: 8,
+    padding: 28,
+    justifyContent: 'space-evenly',
+    alignItems: 'center',
+    width: 131,
+    height: 130,
+    backgroundColor:"#296ecf",
+    borderColor:"white",
+    shadowColor: "#000",
+    opacity:0.6,
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.22,
+    shadowRadius: 2.22,
+    
+    elevation: 3,
+  },
+  options_touchButtonSetting:{
+    borderRadius: 15,
+    margin: 8,
+    padding: 28,
+    justifyContent: 'space-evenly',
+    alignItems: 'center',
+    width: 268,
+    height: 130,
+    backgroundColor:"#296ecf",
+    borderColor:"white",
+    shadowColor: "#000",
+    opacity:0.6,
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.22,
+    shadowRadius: 2.22,
+    
+    elevation: 3,
   },
   options_icon: {
     fontSize: 34,

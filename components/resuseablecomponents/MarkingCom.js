@@ -14,10 +14,28 @@ import CheckBtn from 'react-native-vector-icons/Ionicons';
 import CheckBtn2 from 'react-native-vector-icons/Ionicons';
 import ImageIcon from 'react-native-vector-icons/FontAwesome';
 import AdminTable from '../../components/resuseablecomponents/AdminTable';
+import axios from 'axios';
+import moment from 'moment';
 
 const MarkingCom = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [check, setChecked] = useState(false);
+  const [checkout, setCheckOut] = useState('');
+  const [check_in, setCheckIn] = useState('');
+  const [userId, setUserId] = useState('');
+
+
+ const PostCheckIn =()=>{
+   let response = axios.post('https://presence-server.herokuapp.com/attendance/create_attendance',{
+    check_in:'red',
+    check_out:'reed',
+  
+   }).then((x)=>{
+    console.log(x.data)
+   })
+   setChecked(true)
+  }
+  
 
   if (check === false) {
     return (
@@ -87,7 +105,7 @@ const MarkingCom = () => {
               </View>
             </View>
             <TouchableOpacity
-              onPress={() => setChecked(true)}
+              onPress={PostCheckIn}
               style={styles.detail_btn_plaincheck}>
               <Text style={styles.plaincheck_text}>
                 Mark Attendance check-in
@@ -115,11 +133,7 @@ const MarkingCom = () => {
           <Modal
             animationType="slide"
             transparent={true}
-            visible={modalVisible}
-            onRequestClose={() => {
-              Alert.alert('Modal has been closed.');
-              setModalVisible(!modalVisible);
-            }}>
+            visible={modalVisible}>
             <View style={styles.centeredView}>
               <View style={styles.modalView}>
                 <Text style={styles.modalText}>Info</Text>
