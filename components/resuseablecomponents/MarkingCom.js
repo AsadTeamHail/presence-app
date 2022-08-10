@@ -19,23 +19,36 @@ import moment from 'moment';
 const MarkingCom = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [check, setChecked] = useState(false);
-  const [checkout, setCheckOut] = useState('');
-  const [check_in, setCheckIn] = useState('');
-  const [userId, setUserId] = useState('');
 
 
- const PostCheckIn =()=>{
-   let response = axios.post('https://presence-server.herokuapp.com/attendance/create_attendance',{
+
+ const PostCheckIn = async()=>{
+   let response =await axios.post('https://presence-server.herokuapp.com/attendance/create_attendance',{
     checkin:moment().format('MMMM Do YYYY, h:mm a'),
     checkout:'not yet',
     userid:'9c18da62-4bae-4357-97d6-6d3a74f994c0',
   
    }).then((x)=>{
-    console.log(x.data)
+    console.log(x.data.attendance_sheet.id)
+    AsyncStorage.setItem('id', x.data.attendance_sheet.id)
    })
    setChecked(true)
   }
-  
+
+
+  const PostCheckOut = async()=>{
+    const id = await AsyncStorage.getItem('id')
+    let response =await axios.post('https://presence-server.herokuapp.com/attendance/checkout_attendance',{
+     checkout:moment().format('MMMM Do YYYY, h:mm a'),
+     id:id,
+   
+    }).then((x)=>{
+     console.log(x.data.attendance_sheet.id)
+     AsyncStorage.setItem('id', x.data.attendance_sheet.id)
+    })
+    setChecked(false)
+   }
+ 
 
   if (check === false) {
     return (
@@ -217,7 +230,7 @@ const MarkingCom = () => {
               </View>
               
             </View>
-            <TouchableOpacity style={styles.detail_btn}>
+            <TouchableOpacity style={styles.detail_btnChecked}>
               <Text style={styles.info_text}>Mark Attendance checked-in</Text>
               <CheckBtn2
                 style={styles.checkbtn_green}
@@ -225,7 +238,7 @@ const MarkingCom = () => {
               />
             </TouchableOpacity>
             <TouchableOpacity
-              onPress={() => setChecked(false)}
+              onPress={PostCheckOut}
               style={styles.detail_btn}>
               <Text style={styles.info_text}>Mark Attendance check-out</Text>
               <CheckBtn2
@@ -416,6 +429,7 @@ marginLeft:28
     marginLeft: 10,
     alignItems: 'center',
     alignSelf: 'center',
+   
   },
   image_icon: {
     color: '#296ecf',
@@ -430,6 +444,20 @@ marginLeft:28
     marginLeft: 10,
     alignItems: 'center',
     alignSelf: 'center',
+    opacity:0.6
+  },
+  detail_btnChecked:{
+    flexDirection: 'row',
+    borderWidth: 1,
+    borderColor: 'white',
+    height: 53,
+    width: 285,
+    borderRadius: 200,
+    alignSelf: 'center',
+    backgroundColor: '#296ecf',
+    marginTop: 20,
+    backgroundColor: 'white',
+    opacity:0.6
   },
   instruction_text: {
     color: 'white',
