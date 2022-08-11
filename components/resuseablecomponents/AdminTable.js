@@ -10,26 +10,42 @@ import {
   Image,
   TouchableOpacity,
   ScrollView,
+  ActivityIndicator
 } from 'react-native';
 import {DataTable} from 'react-native-paper';
-
 
 const AdminTable = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [modalVisible_2, setModalVisible_2] = useState(false);
   const [attendance, setAttendance] = useState([]);
+  const [load, setLoad] = useState([false]);
 
   useEffect(() => {
+    let response = axios
+      .get(
+        'https://presence-app-server.herokuapp.com/attendance/get_attendance',
+        {
+          headers: {
+            id: '276e2869-0b93-4697-9d65-ea8f1bc2f3e1',
+          },
+        },
+      )
+      .then(x => {
+        setAttendance(x.data);
+        setLoad(false);
+      });
+  }, [attendance]);
 
-    let response =axios.get('https://presence-app-server.herokuapp.com/attendance/get_attendance',{ headers: {
-      'id': '1f3f7a37-feaa-4017-951f-55485f4f5527'
-    }}).then((x)=>{
-      setAttendance(x.data)
-    })
-   }, [attendance])
-  
+  const renderData = () => {
+    if (load != false) {
+      return (
+        <View style={{width: 300, height:236}} >
+             <ActivityIndicator size="large" style={{justifyContent:"center", marginTop:100}} color='#296ecf' />
+        </View>
+      );
+    }
   return (
-    <View style={{width: 300}}>
+    <View style={{width: 300, height:236}}>
       <ScrollView>
         <DataTable>
           <DataTable.Header>
@@ -39,26 +55,32 @@ const AdminTable = () => {
             <DataTable.Title numeric>Image</DataTable.Title>
           </DataTable.Header>
 
-        {attendance.map((item,index)=>{return(
-          <DataTable.Row  key={index}>
-            <DataTable.Cell>{item.check_in.slice(0,9)}</DataTable.Cell>
-            <DataTable.Cell numeric>
-              <Text style={styles.check_in_time}>{item.check_in.slice(18,25)}</Text>
-            </DataTable.Cell>
-            <DataTable.Cell numeric>
-            <Text style={styles.check_in_time}>{item.check_out.slice(18,25)}</Text>
-            </DataTable.Cell>
-            <DataTable.Cell numeric>
-              <TouchableOpacity
-                onPress={() => setModalVisible(true)}
-                style={styles.img_btn}>
-                <Text style={styles.text_btn}>View</Text>
-              </TouchableOpacity>
-            </DataTable.Cell>
-          </DataTable.Row>
-)})}
-
-        
+          {attendance.map((item, index) => {
+            return (
+              <ScrollView key={index}>
+              <DataTable.Row >
+                <DataTable.Cell>{item.day}</DataTable.Cell>
+                <DataTable.Cell numeric>
+                  <Text style={styles.check_in_time}>
+                    {item.check_in}
+                  </Text>
+                </DataTable.Cell>
+                <DataTable.Cell numeric>
+                  <Text style={styles.check_in_time}>
+                    {item.check_out}
+                  </Text>
+                </DataTable.Cell>
+                <DataTable.Cell numeric>
+                  <TouchableOpacity
+                    onPress={() => setModalVisible(true)}
+                    style={styles.img_btn}>
+                    <Text style={styles.text_btn}>View</Text>
+                  </TouchableOpacity>
+                </DataTable.Cell>
+              </DataTable.Row>
+              </ScrollView>
+            );
+          })}
         </DataTable>
         <View style={styles.centeredView}>
           <Modal
@@ -104,6 +126,8 @@ const AdminTable = () => {
     </View>
   );
 };
+  return renderData();
+};
 
 export default AdminTable;
 
@@ -112,9 +136,8 @@ const styles = StyleSheet.create({
     padding: 15,
   },
   img: {
-
-height:320,
-width:320
+    height: 320,
+    width: 320,
   },
   centeredView: {
     flex: 1,
@@ -148,7 +171,7 @@ width:320
     backgroundColor: '#F194FF',
   },
   buttonClose: {
-    marginTop:10,
+    marginTop: 10,
     backgroundColor: '#296ecf',
   },
   textStyle: {
@@ -163,33 +186,7 @@ width:320
   },
   check_in_time: {
     color: 'green',
+    fontSize:13
   },
-  check_in_time2: {
-    color: 'green',
-  },
-  check_in_time3: {
-    color: 'red',
-  },
-  check_in_time4: {
-    color: 'red',
-  },
-  check_in_time5: {
-    color: 'green',
-  },
-
-  check_out_time: {
-    color: 'green',
-  },
-  check_out_time2: {
-    color: 'green',
-  },
-  check_out_time3: {
-    color: 'red',
-  },
-  check_out_time4: {
-    color: 'red',
-  },
-  check_out_time5: {
-    color: 'red',
-  },
+ 
 });

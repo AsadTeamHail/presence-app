@@ -21,12 +21,13 @@ const AttendanceCom = () => {
 
   const onChangeSearch = query => setSearchQuery(query);
 
-useEffect(() => {
- let response =axios.get('https://presence-app-server.herokuapp.com/user/get_users').then((x)=>{
-  setUsers(x.data)
- })
-}, [users])
-
+  useEffect(() => {
+    let response = axios
+      .get('https://presence-app-server.herokuapp.com/user/get_users')
+      .then(x => {
+        setUsers(x.data);
+      });
+  }, [users]);
 
   return (
     <>
@@ -37,13 +38,12 @@ useEffect(() => {
             opacity: 0.6,
             zIndex: 1,
             backgroundColor: 'grey',
-            height: '100%',
+            height: '200%',
             width: '100%',
           }}></View>
       )}
 
       <View>
-
         <View>
           <Searchbar
             placeholder="Search"
@@ -54,39 +54,40 @@ useEffect(() => {
       </View>
       <View style={styles.container}>
         <ScrollView>
-        {users.map((item,index)=>{return(
-          <View style={styles.grid_view}>
-            <View style={styles.user_image}>
-              <Image
-                source={require('../../assets/images/user_img.jpg')}
-                style={styles.user_img}
-                />
-            </View>
-          
-        
-
-            <View style={styles.user_detail}>
-              <Text style={styles.detail_text}>Name: John Doe</Text>
-              <Text style={styles.detail_subtext}>
-                Designation: Site Engineer
-              </Text>
-            </View>
-            <TouchableOpacity
-              onPress={() => setModalVisible(true)}
-              style={styles.detail_btn}>
-              <Text style={styles.info_text}>Info</Text>
-            </TouchableOpacity>
-          </View>
-          )})}
+          {users.map((item, index) => {
+            return (
+              <View style={styles.grid_view} key={index}>
+                <View style={styles.user_image}>
+                  <Image
+                    source={require('../../assets/images/user_img.jpg')}
+                    style={styles.user_img}
+                  />
+                </View>
+                <View style={styles.user_detail}>
+                  <Text style={styles.detail_text}>
+                    {item.firstname} {item.lastname}
+                  </Text>
+                  <Text style={styles.detail_subtext}>
+                    Designation: Site Engineer
+                  </Text>
+                </View>
+                <TouchableOpacity
+                  onPress={() => (setModalVisible(true)) }
+                  style={styles.detail_btn}>
+                  <Text style={styles.info_text}>Info</Text>
+                </TouchableOpacity>
+              </View>
+            );
+          })}
         </ScrollView>
       </View>
-      
+
       <View style={styles.centeredView}>
         <Modal animationType="slide" transparent={true} visible={modalVisible}>
           <View style={styles.centeredView}>
             <View style={styles.modalView}>
               <Text style={styles.modalText}>Info</Text>
-              <AdminTable />
+              <AdminTable  />
               <Pressable
                 style={[styles.button, styles.buttonClose]}
                 onPress={() => setModalVisible(!modalVisible)}>

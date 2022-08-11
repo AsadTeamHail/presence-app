@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Modal,
   Pressable,
+  ActivityIndicator,
 } from 'react-native';
 import React, {useState} from 'react';
 import CheckBtn from 'react-native-vector-icons/Ionicons';
@@ -14,20 +15,49 @@ import ImageIcon from 'react-native-vector-icons/FontAwesome';
 import AdminTable from '../../components/resuseablecomponents/AdminTable';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {launchImageLibrary} from 'react-native-image-picker';
 import moment from 'moment';
 
 const MarkingCom = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [check, setChecked] = useState(false);
+  const [selectedImage, setSelectedImage] = useState('');
+
+  const handleChoosePhoto = () => {
+    launchImageLibrary({noData: true}, response => {
+      // console.log(response);
+      if (response) {
+        setSelectedImage(response);
+      }
+    });
+  };
+
+  const onFileSelected = async (event, files) => {
+    event.preventDefault();
+    
+    const formData = new FormData();
+    formData.append('file', selectedImage);
+    formData.append('upload_preset', 'coverPics');
+
+    await axios.post('https://api.cloudinary.com/v1_1/dwuzocatf/image/upload', {
+      body: formData,
+    }).then((x)=>{
+      console.log(x)
+    })
+   
+  };
 
   const PostCheckIn = async () => {
-    let response =  axios
+    let response = axios
       .post(
         'https://presence-app-server.herokuapp.com/attendance/create_attendance',
         {
-          checkin: moment().format('MMMM Do YYYY, h:mm a'),
+          checkin: moment().format('h:mm a'),
           checkout: 'not yet',
-          userid: '1f3f7a37-feaa-4017-951f-55485f4f5527',
+          days: moment().format('dddd'),
+          months: moment().format('MMMM'),
+          years: moment().format('YYYY'),
+          userid: '276e2869-0b93-4697-9d65-ea8f1bc2f3e1',
         },
       )
       .then(x => {
@@ -38,18 +68,13 @@ const MarkingCom = () => {
 
   const PostCheckOut = async () => {
     setChecked(false);
-    let response = axios
-      .post(
-        'https://presence-app-server.herokuapp.com/attendance/checkout_attendance',
-        {
-          checkout: moment().format('MMMM Do YYYY, h:mm a'),
-          id: await AsyncStorage.getItem('id')
-        },
-      )
-      .then(x => {
-        console.log(x);
-      });
-
+    let response = axios.post(
+      'https://presence-app-server.herokuapp.com/attendance/checkout_attendance',
+      {
+        checkout: moment().format('h:mm a'),
+        id: await AsyncStorage.getItem('id'),
+      },
+    );
   };
 
   if (check === false) {
@@ -70,18 +95,22 @@ const MarkingCom = () => {
           <View style={styles.full_view}>
             <View style={styles.grid_view}>
               <View style={styles.user_detail}>
-                <Text style={styles.detail_text}>Total Leaves: 2</Text>
+                <Text style={styles.detail_text}>2</Text>
+                <Text style={styles.detail_info}>Total Absents</Text>
               </View>
               <View style={styles.user_detail}>
-                <Text style={styles.detail_text}>Total Attended: 18</Text>
+                <Text style={styles.detail_text}> 18</Text>
+                <Text style={styles.detail_info}> Total Attended</Text>
               </View>
             </View>
             <View style={styles.grid_view}>
               <View style={styles.user_detail2}>
-                <Text style={styles.detail_text}>Total Days: 30</Text>
+                <Text style={styles.detail_text}>30</Text>
+                <Text style={styles.detail_info}>Total Days</Text>
               </View>
               <View style={styles.user_detail2}>
-                <Text style={styles.detail_text}>Month: July</Text>
+                <Text style={styles.detail_text}>July</Text>
+                <Text style={styles.detail_info}>Month</Text>
               </View>
             </View>
             <View style={styles.grid_view}>
@@ -103,9 +132,7 @@ const MarkingCom = () => {
                 <Text style={styles.detail_text_1}>Hi, Worker</Text>
               </View>
             </View>
-            <View style={styles.grid_view}>
-             
-            </View>
+            <View style={styles.grid_view}></View>
             <View style={styles.grid_view}>
               <View style={styles.text_1_grid2}>
                 <Text style={styles.detail_text_3}>
@@ -176,18 +203,22 @@ const MarkingCom = () => {
           <View style={styles.full_view}>
             <View style={styles.grid_view}>
               <View style={styles.user_detail}>
-                <Text style={styles.detail_text}>Total Leaves: 2</Text>
+                <Text style={styles.detail_text}>2</Text>
+                <Text style={styles.detail_info}>Total Absents</Text>
               </View>
               <View style={styles.user_detail}>
-                <Text style={styles.detail_text}>Total Attended: 18</Text>
+                <Text style={styles.detail_text}> 18</Text>
+                <Text style={styles.detail_info}> Total Attended</Text>
               </View>
             </View>
             <View style={styles.grid_view}>
               <View style={styles.user_detail2}>
-                <Text style={styles.detail_text}>Total Days: 30</Text>
+                <Text style={styles.detail_text}>30</Text>
+                <Text style={styles.detail_info}>Total Days</Text>
               </View>
               <View style={styles.user_detail2}>
-                <Text style={styles.detail_text}>Month: July</Text>
+                <Text style={styles.detail_text}>July</Text>
+                <Text style={styles.detail_info}>Month</Text>
               </View>
             </View>
             <View style={styles.grid_view}>
@@ -204,41 +235,35 @@ const MarkingCom = () => {
         </View>
         <View style={styles.container}>
           <View style={styles.full_view2}>
-            <View style={styles.grid_view_2}>
-              <View style={styles.text_grid2}>
-                <Text style={styles.detail_text_1}>Hi, Worker</Text>
-              </View>
-            </View>
-            <View style={styles.grid_view}>
-            
-            </View>
-            <View style={styles.grid_view}>
-              <View style={styles.user_detail}>
-                <Text style={styles.detail_text_2}>
-                  Touch check-out button when you leave.
-                </Text>
-              </View>
-            </View>
-            <TouchableOpacity style={styles.detail_btnChecked}>
-              <Text style={styles.info_text}>Mark Attendance checked-in</Text>
-              <CheckBtn2
-                style={styles.checkbtn_green}
-                name="checkmark-circle-sharp"
-              />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={PostCheckOut} style={styles.detail_btn}>
-              <Text style={styles.info_text}>Mark Attendance check-out</Text>
-              <CheckBtn2
-                style={styles.checkbtn_red}
-                name="checkmark-circle-sharp"
-              />
-            </TouchableOpacity>
+            <View style={{marginTop: 50}}>
+              <TouchableOpacity style={styles.detail_btnChecked}>
+                <Text style={styles.info_text}>Mark Attendance checked-in</Text>
+                <CheckBtn2
+                  style={styles.checkbtn_green}
+                  name="checkmark-circle-sharp"
+                />
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={PostCheckOut}
+                style={styles.detail_btn}>
+                <Text style={styles.info_text}>Mark Attendance check-out</Text>
+                <CheckBtn2
+                  style={styles.checkbtn_red}
+                  name="checkmark-circle-sharp"
+                />
+              </TouchableOpacity>
 
-            <TouchableOpacity
-              onPress={() => setChecked(false)}
-              style={styles.image_btn}>
-              <ImageIcon style={styles.image_icon} name="photo" />
-            </TouchableOpacity>
+              <TouchableOpacity
+                onPress={handleChoosePhoto}
+                style={styles.image_btn}>
+                <ImageIcon style={styles.image_icon} name="photo" />
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={onFileSelected}
+                style={styles.upload_btn}>
+                <Text style={{color: '#296ecf', fontSize: 15, fontWeight:"600", textAlign:"center"}}>Upload </Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
         <View style={styles.centeredView}>
@@ -270,14 +295,13 @@ const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 16,
+    padding: 8,
   },
   grid_view: {
     alignItems: 'center',
     justifyContent: 'center',
-
     flexDirection: 'row',
-    marginTop: 15,
+    marginTop: 10,
     marginRight: 27,
   },
   grid_view_2: {
@@ -289,22 +313,26 @@ const styles = StyleSheet.create({
     marginLeft: 32,
   },
   user_detail2: {
-    marginLeft: 15,
+    marginLeft: 48,
     marginRight: 28,
   },
   detail_text: {
     color: 'white',
     fontWeight: '600',
-    fontSize: 18,
+    fontSize: 25,
     alignContent: 'center',
     justifyContent: 'center',
     alignItems: 'center',
     alignSelf: 'center',
   },
-  detail_text_2: {
+  detail_info: {
     color: 'white',
-    fontWeight: '500',
-    fontSize: 15,
+    fontWeight: '600',
+    fontSize: 14,
+    alignContent: 'center',
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignSelf: 'center',
   },
   detail_text_1: {
     color: 'white',
@@ -379,22 +407,23 @@ const styles = StyleSheet.create({
     marginLeft: 30,
   },
   full_view: {
-    height: 200,
+    height: 213,
     width: 345,
     justifyContent: 'space-evenly',
     backgroundColor: '#296ecf',
     borderWidth: 1,
     borderColor: 'white',
-    borderRadius: 50,
+    borderRadius: 15,
+    paddingBottom: 10,
+    marginTop: 10,
   },
   full_view2: {
     height: 470,
     width: 342,
-
     backgroundColor: '#296ecf',
     borderWidth: 1,
     borderColor: 'white',
-    borderRadius: 50,
+    borderRadius: 15,
   },
   checkbtn_plain: {
     color: '#296ecf',
@@ -447,6 +476,15 @@ const styles = StyleSheet.create({
   instruction_view: {
     paddingLeft: 20,
     paddingTop: 35,
+  },
+  upload_btn: {
+    alignSelf: 'center',
+    marginTop: 20,
+    borderRadius: 20,
+    backgroundColor: 'white',
+    width:70,
+    height:32,
+    padding:5
   },
 
   // modal css
@@ -503,7 +541,7 @@ const styles = StyleSheet.create({
     marginLeft: 18,
     alignSelf: 'center',
     backgroundColor: '#296ecf',
-    marginTop: 5,
+    marginTop: 1,
     backgroundColor: 'white',
   },
 
@@ -521,7 +559,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     alignItems: 'center',
     alignSelf: 'center',
-    fontSize: 16,
+    fontSize: 14,
     color: 'white',
   },
   //   checkmark-circle-sharp
