@@ -90,6 +90,8 @@ const AdminTable = () => {
               visible={modalVisible}>
               <View style={styles.centeredView}>
                 <View style={styles.modalView}>
+                  <View >
+                    <ScrollView>
                   {attendance.map((item,index) => {
                     return (
                       <View key={index}>
@@ -97,6 +99,8 @@ const AdminTable = () => {
                       </View>
                     );
                   })}
+                  </ScrollView>
+                  </View>
                   <Pressable
                     style={[styles.button, styles.buttonClose]}
                     onPress={() => setModalVisible(!modalVisible)}>
@@ -107,25 +111,7 @@ const AdminTable = () => {
             </Modal>
           </View>
 
-          <View style={styles.centeredView}>
-            <Modal
-              animationType="slide"
-              transparent={true}
-              visible={modalVisible_2}>
-              <View style={styles.centeredView}>
-                <View style={styles.modalView}>
-                  <Text style={{marginBottom: 100, marginTop: 200}}>
-                    No Image!
-                  </Text>
-                  <Pressable
-                    style={[styles.button, styles.buttonClose]}
-                    onPress={() => setModalVisible_2(!modalVisible_2)}>
-                    <Text style={styles.textStyle}>Close</Text>
-                  </Pressable>
-                </View>
-              </View>
-            </Modal>
-          </View>
+        
         </ScrollView>
       </View>
     );
@@ -140,14 +126,15 @@ const styles = StyleSheet.create({
     padding: 15,
   },
   img: {
-    height: 320,
+    height: 220,
     width: 320,
+    marginTop:10
   },
   centeredView: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 22,
+    marginTop: 2,
   },
   modalView: {
     margin: 20,
@@ -155,7 +142,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     padding: 35,
     alignItems: 'center',
-    height: 475,
+    height: 435,
     width: 369,
     shadowColor: '#000',
     shadowOffset: {
