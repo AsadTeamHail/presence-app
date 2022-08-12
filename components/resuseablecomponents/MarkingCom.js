@@ -15,7 +15,7 @@ import ImageIcon from 'react-native-vector-icons/FontAwesome';
 import AdminTable from '../../components/resuseablecomponents/AdminTable';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {launchImageLibrary} from 'react-native-image-picker';
+import {launchImageLibrary, launchCamera} from 'react-native-image-picker';
 import moment from 'moment';
 
 const MarkingCom = () => {
@@ -23,28 +23,37 @@ const MarkingCom = () => {
   const [check, setChecked] = useState(false);
   const [selectedImage, setSelectedImage] = useState('');
 
-  const handleChoosePhoto = () => {
-    launchImageLibrary({noData: true}, response => {
-      // console.log(response);
-      if (response) {
-        setSelectedImage(response);
-      }
-    });
+  const options = {
+    title: 'Select Photo',
+    storageOptions: {
+      skipBackup: true,
+      path: 'images',
+    },
   };
 
-  const onFileSelected = async (event, files) => {
-    event.preventDefault();
-    
-    const formData = new FormData();
-    formData.append('file', selectedImage);
-    formData.append('upload_preset', 'coverPics');
-
-    await axios.post('https://api.cloudinary.com/v1_1/dwuzocatf/image/upload', {
-      body: formData,
-    }).then((x)=>{
-      console.log(x)
-    })
-   
+  const openGallery = async () => {
+    const images = await launchImageLibrary(options);
+    console.log(images.assets[0])
+    const data = new FormData(); 
+    data.append('file', {
+      uri:images.assets[0].uri,
+      type:images.assets[0].type,
+      name:images.assets[0].fileName,
+    });
+    data.append('upload_preset', 'coverPics');
+    data.append('cloud_name', 'dwuzocatf');
+    await fetch('https://api.cloudinary.com/v1_1/dwuzocatf/image/upload', {
+       method: 'post',
+       body: data,
+     })
+       .then(res => res.json())
+       .then(data => {
+         console.log(data.url);
+         setSelectedImage(data.url)
+       })
+       .catch(err => {
+         console.log(err);
+       });
   };
 
   const PostCheckIn = async () => {
@@ -53,11 +62,12 @@ const MarkingCom = () => {
         'https://presence-app-server.herokuapp.com/attendance/create_attendance',
         {
           checkin: moment().format('h:mm a'),
-          checkout: 'not yet',
+          checkout: 'Not-yet',
           days: moment().format('dddd'),
           months: moment().format('MMMM'),
           years: moment().format('YYYY'),
           userid: '276e2869-0b93-4697-9d65-ea8f1bc2f3e1',
+          
         },
       )
       .then(x => {
@@ -72,6 +82,16 @@ const MarkingCom = () => {
       'https://presence-app-server.herokuapp.com/attendance/checkout_attendance',
       {
         checkout: moment().format('h:mm a'),
+        id: await AsyncStorage.getItem('id'),
+      },
+    );
+  };
+
+  const imageUploaddb = async () => {
+    let response = axios.post(
+      'https://presence-app-server.herokuapp.com/attendance/update_img',
+      {
+        img_url:selectedImage,
         id: await AsyncStorage.getItem('id'),
       },
     );
@@ -254,14 +274,22 @@ const MarkingCom = () => {
               </TouchableOpacity>
 
               <TouchableOpacity
-                onPress={handleChoosePhoto}
+                onPress={openGallery}
                 style={styles.image_btn}>
                 <ImageIcon style={styles.image_icon} name="photo" />
               </TouchableOpacity>
               <TouchableOpacity
-                onPress={onFileSelected}
+                onPress={imageUploaddb}
                 style={styles.upload_btn}>
-                <Text style={{color: '#296ecf', fontSize: 15, fontWeight:"600", textAlign:"center"}}>Upload </Text>
+                <Text
+                  style={{
+                    color: '#296ecf',
+                    fontSize: 15,
+                    fontWeight: '600',
+                    textAlign: 'center',
+                  }}>
+                  Upload{' '}
+                </Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -482,9 +510,9 @@ const styles = StyleSheet.create({
     marginTop: 20,
     borderRadius: 20,
     backgroundColor: 'white',
-    width:70,
-    height:32,
-    padding:5
+    width: 70,
+    height: 32,
+    padding: 5,
   },
 
   // modal css
